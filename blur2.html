@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clear Vision</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #111;
+  cursor: crosshair;
+}
+
+/* Blurred image covers the entire screen */
+.layer {
+  position: fixed;
+  inset: -12px;
+  background-image: url("bg.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+.blurred {
+  filter: blur(8px);
+}
+
+/* Sharp image is revealed only through this rectangle */
+.clear {
+  position: fixed;
+  inset: 0;
+  background-image: url("bg.jpg");
+  background-size: cover;
+  background-position: center;
+  clip-path: inset(0);
+  pointer-events: none;
+  will-change: clip-path;
+}
+</style>
+</head>
+
+<body>
+
+<div class="layer blurred"></div>
+<div class="clear" id="clear"></div>
+
+<script>
+const clear = document.getElementById("clear");
+const boxWidth = 260;
+const boxHeight = 180;
+
+function move(x, y) {
+  const left = Math.max(
+    0, Math.min(x - boxWidth / 2, window.innerWidth - boxWidth)
+  );
+  const top = Math.max(
+    0, Math.min(y - boxHeight / 2, window.innerHeight - boxHeight)
+  );
+
+  clear.style.clipPath =
+    `inset(${top}px ${window.innerWidth - left - boxWidth}px ${window.innerHeight - top - boxHeight}px ${left}px)`;
+}
+
+document.addEventListener("mousemove", e => move(e.clientX, e.clientY));
+
+document.addEventListener("touchmove", e => {
+  const t = e.touches[0];
+  move(t.clientX, t.clientY);
+}, { passive: true });
+
+move(window.innerWidth / 2, window.innerHeight / 2);
+</script>
+
+</body>
+</html>
